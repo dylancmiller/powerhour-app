@@ -1,0 +1,44 @@
+﻿
+#home #instructions {
+    padding:5px;
+    color:#fff;
+    background-color:#373737;
+    font-size:14px;
+    position:fixed;
+    top:60px;
+    z-index:100;
+    width:100%;
+}
+
+#home .playlistChooser-item {
+    background-color:#373737;
+    padding:10px;
+    white-space:nowrap;
+}
+
+#home .playlistChooser-item-alt {
+    background-color: #313131;
+}
+
+#home #playlistChooser {
+    position:relative;
+    top:29px;
+}
+
+#home .playlistName {
+    color:#fff;
+    font-size:large;
+}
+
+#home .albumCover {
+    display:inline-block;
+    vertical-align:top;
+    margin-right:10px;
+}
+
+#home .playlistDetails-container {
+    display:inline-block;
+    vertical-align:top;
+    word-wrap:break-word;
+    white-space:normal;
+}
