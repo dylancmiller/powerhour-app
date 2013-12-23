@@ -21,13 +21,11 @@ require([
     else {
         $('#' + args[0]).show();        // Show current section
 
-        console.log(args);
-
         // If there are multiple arguments, handle them accordingly
         if (args[1]) {
             switch (args[0]) {
                 case "play":
-                    play.doPlay(args[1]);
+                    play.doPlay(args.slice(1, args.length));
                     break;
                 default:
                     playlistChooser.doPlaylistChooser();

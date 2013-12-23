@@ -1,1 +1,24 @@
-﻿
+﻿#play {
+    background-color:inherit;
+}
+#play #playControls {
+    width:500px;
+    margin:auto;
+    padding:10px;
+}
+#play #counter {
+    font-size:70px;
+    color:green;
+}
+#play #counterContainer {
+    display:inline-block;
+    vertical-align:top;
+    color:#fff;
+    font-size:18px;
+    word-break:break-all;
+}
+#play #albumCover {
+    display:inline-block;
+    vertical-align:top;
+    margin-right:10px;
+}

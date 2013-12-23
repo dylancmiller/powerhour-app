@@ -27,8 +27,9 @@
 
                 var coverLink = document.createElement('a');
                 coverLink.href = '#';
-                $(coverLink).click(function () {
-                    models.application.openURI('spotify:app:powerhour-app:play:' + curPlaylist.uri);
+                coverLink.id = curPlaylist.uri;
+                $(coverLink).click(function (obj) {
+                    models.application.openURI('spotify:app:powerhour-app:play:' + this.id);
                 });
                 coverLink.appendChild(coverContainer);
                 playlistContainer.appendChild(coverLink);
