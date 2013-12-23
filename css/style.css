@@ -1,0 +1,68 @@
+/* Include your CSS rules here */
+body {
+    font-family: 'Lucida Grande', 'Helvetica', Georgia;
+    padding:0;
+    margin:0;
+    background-color:#373737;
+}
+
+#banner {
+    width:100%;
+    height:60px;
+    /*background-image:url('../images/banner-bg.png');
+    background-repeat:repeat-x;*/
+    background-image: repeating-linear-gradient(0deg, #ff6000, #ff9352);
+    text-align:center;
+    vertical-align:middle;
+    position:fixed;
+    z-index:100;
+}
+
+#instructions {
+    padding:5px;
+    color:#fff;
+    background-color:#373737;
+    font-size:14px;
+    position:fixed;
+    top:60px;
+    z-index:100;
+    width:100%;
+}
+
+.playlistChooser-item {
+    background-color:#373737;
+    padding:10px;
+    white-space:nowrap;
+}
+
+.playlistChooser-item-alt {
+    background-color: #313131;
+}
+
+#playlistChooser {
+    position:relative;
+    top:29px;
+}
+
+.playlistName {
+    color:#fff;
+    font-size:large;
+}
+
+.albumCover {
+    display:inline-block;
+    vertical-align:top;
+    margin-right:10px;
+}
+
+.playlistDetails-container {
+    display:inline-block;
+    vertical-align:top;
+    word-wrap:break-word;
+    white-space:normal;
+}
+
+.section {
+    position:relative;
+    top:60px;
+}
