@@ -75,9 +75,19 @@
     }
 
     function trackChanged() {
-        //curTime = 10;
-        curTime = 60;
-        counter.innerText = curTime;
+
+        models.player.load('context').done(function (player) {
+            if (player.context.uri == tempPlaylist.uri) {
+                //curTime = 10;
+                curTime = 60;
+                counter.innerText = curTime;
+
+                var image = Image.forTrack(player.track, { width: 300, height: 300 });
+                var coverContainer = document.getElementById('albumCover');
+                coverContainer.innerHTML = '';
+                coverContainer.appendChild(image.node);
+            }
+        });
     }
 
     function playingChanged() {
@@ -176,15 +186,16 @@
     }
 
     function playNextTrack(player) {
-        player.skipToNextTrack();
-        var duration = models.player.track.duration;
-        var start = 0;
-        if (duration > 60000) {
-            start = (duration - 60000) / 2;
-        }
-        player.seek(start).done(function () {
-            curTime = 60;
-            //curTime = 10;
+        player.skipToNextTrack().done(function () {
+            var duration = player.track.duration;
+            var start = 0;
+            if (duration > 60000) {
+                start = (duration - 60000) / 2;
+            }
+            player.seek(start).done(function () {
+                curTime = 60;
+                //curTime = 10;
+            });
         });
     }
 });
