@@ -35,7 +35,7 @@
                                     list.init();
                                     list.selectItem(0);
 
-                                    var image = Image.forPlaylist(playlist, { width: 300, height: 300 });
+                                    var image = Image.forPlaylist(origPlaylist, { width: 300, height: 300 });
                                     var coverContainer = document.createElement('div');
                                     coverContainer.id = 'albumCover';
                                     coverContainer.appendChild(image.node);
