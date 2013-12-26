@@ -8,7 +8,11 @@
 
     var counter;
     var tempPlaylist;
-    var curTime = 60;
+    var totalTime = 0;
+    //var curTime = 10; //Test
+    //var timeLimit = 30; //Test (3 songs)
+    var curTime = 60; //Production
+    var timeLimit = 3600; //Production (60 songs)
 
     var doPlay = function (args) {
         //Setup playlist and play controls
@@ -71,6 +75,7 @@
     }
 
     function trackChanged() {
+        //curTime = 10;
         curTime = 60;
         counter.innerText = curTime;
     }
@@ -141,24 +146,45 @@
         models.player.load('context').done(function (player) {
             models.player.load('context', 'playing').done(function (player) {
                 if (player.context.uri == tempPlaylist.uri) {
-                    if (curTime <= 0) {
-                        player.skipToNextTrack();
-                        var duration = models.player.track.duration;
-                        var start = 0;
-                        if (duration > 60000) {
-                            start = (duration - 60000) / 2;
+                    if (totalTime >= timeLimit) {
+                        models.player.stop();
+
+                        //
+                        //PowerHour is over!
+                        //Ready for the next round?
+                        //
+                    }
+                    else if (curTime <= 0) {
+                        if (models.player.repeat) {
+                            playNextTrack(player);
                         }
-                        player.seek(start).done(function () {
-                            curTime = 60;
-                            //curTime = 10;
-                        });
+                        else {
+                            //The player MUST be set to repeat.
+                            models.player.setRepeat(true).done(function () {
+                                playNextTrack(player);
+                            });
+                        }
                     }
                     else {
                         curTime--;
+                        totalTime++;
                     }
                     counter.innerText = curTime;
                 }
             });
+        });
+    }
+
+    function playNextTrack(player) {
+        player.skipToNextTrack();
+        var duration = models.player.track.duration;
+        var start = 0;
+        if (duration > 60000) {
+            start = (duration - 60000) / 2;
+        }
+        player.seek(start).done(function () {
+            curTime = 60;
+            //curTime = 10;
         });
     }
 });
