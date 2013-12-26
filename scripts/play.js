@@ -8,7 +8,7 @@
 
     var counter;
     var tempPlaylist;
-    var curTime = 10;
+    var curTime = 60;
 
     var doPlay = function (args) {
         //Setup playlist and play controls
@@ -55,8 +55,6 @@
 
                                     counterContainer.appendChild(counter);
                                     document.getElementById('playControls').appendChild(counterContainer);
-
-                                    //models.player.playContext(tempPlaylist);
                                 });
                             });
                         });
@@ -73,70 +71,71 @@
     }
 
     function trackChanged() {
-        curTime = 10;
+        curTime = 60;
         counter.innerText = curTime;
     }
 
-    var timerId = null;
     function playingChanged() {
         models.player.load('context', 'playing').done(function (player) {
             if (player.context.uri == tempPlaylist.uri) {
                 if (player.playing) {
-                    //Player was previously paused. Restart timer.
-                    timerId = setInterval(updateTimerView, 1000);
+                    if (timerId != null) {
+                        //Player was previously paused. Restart timer.
+                        manageTimers(true);
+                    }
                 }
                 else {
-                    //Player is paused
-                    clearInterval(timerId);
+                    //Player is paused. Stop timer.
+                    manageTimers(false);
                 }
             }
         });
     }
 
-    function contextChanged() {
-        models.player.load('context').done(function (player) {
-            if (player.context.uri != tempPlaylist.uri) {
-                //User is playing a different context. Delete temp playlist.
-                models.Playlist.removeTemporary(tempPlaylist);
-                clearInterval(timerId);
+    /**
+    *  change:context is fired incorrectly. faking a context change by setting
+    *  last_context_uri.
+    */
+    var lastContextUri = null;
+    function contextChanged(e) {
+        if (e.oldValue != null) {
+            var oldUri = e.oldValue.uri;
+            if (lastContextUri != oldUri) {
+                lastContextUri = oldUri;
+
+                models.player.load('context').done(function (player) {
+                    if (player.context.uri == tempPlaylist.uri) {
+                        //User started playing this context. Start timer.
+                        manageTimers(true);
+                    }
+                    else {
+                        //User is playing a different context. Delete temp playlist and timer.
+                        models.Playlist.removeTemporary(tempPlaylist);
+                        manageTimers(false);
+                    }
+                });
             }
-        });
+        }
     }
 
-    //
-    //This block of code SHOULD work if change:context is fired correctly
-    //
-    //var timerId = null;
-    //function playingChanged() {
-    //    models.player.load('context', 'playing').done(function (player) {
-    //        if (player.context.uri == tempPlaylist.uri) {
-    //            if (player.playing) {
-    //                if (timerId != null) {
-    //                    //Player was previously paused. Restart timer.
-    //                    timerId = setInterval(updateTimerView, 1000);
-    //                }
-    //            }
-    //            else {
-    //                //Player is paused
-    //                clearInterval(timerId);
-    //            }
-    //        }
-    //    });
-    //}
+    /**
+    * Ensures there is only one timer added to the window at a time.
+    */
+    var timerId = null;
+    var timers = [];
+    function manageTimers(isSetInterval) {
+        timers.forEach(function (timer) {
+            clearInterval(timer);
+        });
+        timers.forEach(function () {
+            timers.pop();
+        });
 
-    //function contextChanged() {
-    //    models.player.load('context').done(function (player) {
-    //        if (player.context.uri == tempPlaylist.uri) {
-    //            //User started playing this context. Start timer.
-    //            //timerId = setInterval(updateTimerView, 1000);
-    //        }
-    //        else {
-    //            //User is playing a different context. Delete temp playlist.
-    //            models.Playlist.removeTemporary(tempPlaylist);
-    //            clearInterval(timerId);
-    //        }
-    //    });
-    //}
+        if (isSetInterval) {
+            timerId = setInterval(updateTimerView, 1000);
+            timers.push(timerId);
+        }
+    }
 
     function updateTimerView() {
         models.player.load('context').done(function (player) {
@@ -150,8 +149,8 @@
                             start = (duration - 60000) / 2;
                         }
                         player.seek(start).done(function () {
-                            //curTime = 60;
-                            curTime = 10;
+                            curTime = 60;
+                            //curTime = 10;
                         });
                     }
                     else {
