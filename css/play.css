@@ -5,19 +5,25 @@
     width:500px;
     margin:auto;
     padding:10px;
-}
-#play #counter {
-    font-size:70px;
-    color:green;
+    white-space:nowrap;
 }
 #play #counterContainer {
     display:inline-block;
     vertical-align:top;
+}
+#play #curCounter-title {
     color:#fff;
     font-size:18px;
-    word-break:break-all;
 }
-#play #albumCover {
+#play #curCounter {
+    font-size:70px;
+    color:green;
+}
+#play #totalCounter {
+    color: #fff;
+}
+
+#play #albumContainer {
     display:inline-block;
     vertical-align:top;
     margin-right:10px;

@@ -6,7 +6,6 @@
 ], function (models, Library, Image, List) {
     'use strict';
 
-    var counter;
     var tempPlaylist;
     var totalTime = 0;
     //var curTime = 10; //Test
@@ -15,10 +14,6 @@
     var timeLimit = 3600; //Production (60 songs)
 
     var doPlay = function (args) {
-        //Setup playlist and play controls
-        document.getElementById('playControls').innerHTML = '';
-        document.getElementById('playlist').innerHTML = '';
-
         var playlistURI = args.join(':');
 
         //Get original playlist
@@ -35,30 +30,20 @@
                                     var list = List.forPlaylist(playlist
                                         //, {'fields': ['track', 'artist', 'album', 'duration']}
                                     );
-                                    document.getElementById('playlist').appendChild(list.node);
+                                    var playlistContainer = document.getElementById('playlist');
+                                    playlistContainer.appendChild(list.node);
                                     list.init();
                                     list.selectItem(0);
 
                                     var image = Image.forPlaylist(origPlaylist, { width: 300, height: 300 });
-                                    var coverContainer = document.createElement('div');
-                                    coverContainer.id = 'albumCover';
-                                    coverContainer.appendChild(image.node);
-                                    document.getElementById('playControls').appendChild(coverContainer);
-
-                                    var counterContainer = document.createElement('div');
-                                    counterContainer.id = 'counterContainer';
-                                    counterContainer.innerHTML = '<span class="counter-title">Seconds till next song:</span>';
-                                    counter = document.createElement('div');
-                                    counter.id = 'counter';
-                                    counter.innerText = curTime;
+                                    var albumContainer = document.getElementById('albumContainer');
+                                    albumContainer.innerHTML = '';
+                                    albumContainer.appendChild(image.node);
 
                                     models.player.addEventListener('change', genericChange);
                                     models.player.addEventListener('change:track', trackChanged);
                                     models.player.addEventListener('change:playing', playingChanged);
                                     models.player.addEventListener('change:context', contextChanged);
-
-                                    counterContainer.appendChild(counter);
-                                    document.getElementById('playControls').appendChild(counterContainer);
                                 });
                             });
                         });
@@ -80,10 +65,12 @@
             if (player.context.uri == tempPlaylist.uri) {
                 //curTime = 10;
                 curTime = 60;
-                counter.innerText = curTime;
+                document.getElementById('curCounter').innerText = curTime;
+
+                document.getElementById('curCounter-title').innerText = 'Seconds until next song:';
 
                 var image = Image.forTrack(player.track, { width: 300, height: 300 });
-                var coverContainer = document.getElementById('albumCover');
+                var coverContainer = document.getElementById('albumContainer');
                 coverContainer.innerHTML = '';
                 coverContainer.appendChild(image.node);
             }
@@ -113,7 +100,7 @@
     */
     var lastContextUri = null;
     function contextChanged(e) {
-        if(lastContextUri != e.target.context.uri) {
+        if (lastContextUri != e.target.context.uri || lastContextUri == null) {
             lastContextUri = e.target.context.uri;
 
             models.player.load('context').done(function (player) {
@@ -176,7 +163,11 @@
                         curTime--;
                         totalTime++;
                     }
-                    counter.innerText = curTime;
+                    document.getElementById('curCounter').innerText = curTime;
+
+                    if (totalTime >= 60) {
+                        document.getElementById('totalCounter').innerText = createHoursAndMinutesString(totalTime) + ' left';
+                    }
                 }
             });
         });
@@ -194,5 +185,29 @@
                 //curTime = 10;
             });
         });
+    }
+
+    function createHoursAndMinutesString(seconds) {
+        seconds = 3600 - seconds;
+        var sec_num = parseInt(seconds, 10); // don't forget the second parm
+        var hours = Math.floor(sec_num / 3600);
+        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+        var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+        var time = '';
+
+        if (hours == 1 && minutes == 0)
+            time = hours + ' hour';
+        if (hours > 1 && minutes == 0)
+            time = hours + ' hours';
+        else if (hours > 1)
+            time = hours + ' hours and ';
+
+        if (minutes == 1)
+            time += minutes + ' minute';
+        else if (minutes > 1)
+            time += minutes + ' minutes';
+
+        return time;
     }
 });
