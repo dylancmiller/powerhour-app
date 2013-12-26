@@ -113,23 +113,20 @@
     */
     var lastContextUri = null;
     function contextChanged(e) {
-        if (e.oldValue != null) {
-            var oldUri = e.oldValue.uri;
-            if (lastContextUri != oldUri) {
-                lastContextUri = oldUri;
+        if(lastContextUri != e.target.context.uri) {
+            lastContextUri = e.target.context.uri;
 
-                models.player.load('context').done(function (player) {
-                    if (player.context.uri == tempPlaylist.uri) {
-                        //User started playing this context. Start timer.
-                        manageTimers(true);
-                    }
-                    else {
-                        //User is playing a different context. Delete temp playlist and timer.
-                        models.Playlist.removeTemporary(tempPlaylist);
-                        manageTimers(false);
-                    }
-                });
-            }
+            models.player.load('context').done(function (player) {
+                if (player.context.uri == tempPlaylist.uri) {
+                    //User started playing this context. Start timer.
+                    manageTimers(true);
+                }
+                else {
+                    //User is playing a different context. Delete temp playlist and timer.
+                    models.Playlist.removeTemporary(tempPlaylist);
+                    manageTimers(false);
+                }
+            });
         }
     }
 
