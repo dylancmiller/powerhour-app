@@ -2,10 +2,13 @@
     background-color:inherit;
 }
 #play #playControls {
-    width:500px;
+    width:200px;
     margin:auto;
     padding:10px;
     white-space:nowrap;
+}
+#play #playControls td {
+    vertical-align:top;
 }
 #play #counterContainer {
     display:inline-block;
@@ -13,7 +16,8 @@
 }
 #play #curCounter-title {
     color:#fff;
-    font-size:18px;
+    font-size:12px;
+    font-weight:bold;
 }
 #play #curCounter {
     font-size:70px;
@@ -22,9 +26,28 @@
 #play #totalCounter {
     color: #fff;
 }
+#play #pieTimer {
+    position:relative;
+    left:-155px;
+    top:30px;
+    z-index:1000;
+}
+#play #playlistItemContainer {
+    display:inline-block;
+}
 
+#play #playlistDetailsContainer {
+    vertical-align:top;
+}
 #play #albumContainer {
     display:inline-block;
     vertical-align:top;
     margin-right:10px;
+}
+#play #playlist {
+    width:100vw;
+}
+#play #playlistName {
+    color:white;
+    font-size:18px;
 }

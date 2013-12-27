@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/play.css" />
   </head>
   <body>
-    <div id="banner"><h1>PowerHour</h1></div>
+    <div id="banner"><a href="spotify:app:powerhour-app:home"><h1>PowerHour</h1></a></div>
     <div id="home" class="section">
         <div id="instructions">
             Choose a playlist from below:
@@ -25,10 +25,18 @@
     </div>
     <div id="play" class="section">
         <div id="playControls">
-            <div id="albumContainer"></div>
+            <div id="playlistItemContainer">
+                <div id="albumContainer"></div>
+                <div id="playlistDetailsContainer">
+                    <span id="playlistName"></span>
+                    <br />
+                    <span id="playlistDetails"></span>
+                </div>
+            </div>
             <div id="counterContainer">
-                <span id="curCounter-title">Play a song to get started!</span>
+                <span id="curCounter-title"><!--Play a song to get started!--></span>
                 <div id="curCounter"></div>
+                <canvas id="pieTimer" width="120" height="120"></canvas>
                 <div id="totalCounter"></div>
             </div>
         </div>

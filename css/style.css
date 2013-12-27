@@ -5,9 +5,12 @@ body {
     margin:0;
     background-color:#373737;
 }
-
-#banner {
+.horizontal-glue {
+    display:inline-block;
     width:100%;
+}
+#banner {
+    width:100vw;
     height:60px;
     /*background-image:url('../images/banner-bg.png');
     background-repeat:repeat-x;*/
@@ -16,6 +19,11 @@ body {
     vertical-align:middle;
     position:fixed;
     z-index:100;
+}
+
+#banner a {
+    text-decoration:none;
+    color:black;
 }
 
 .section {

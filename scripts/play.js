@@ -20,7 +20,7 @@
         models.Playlist.fromURI(playlistURI).load('tracks', 'name').done(function (origPlaylist) {
             //Create temp playlist
             models.Playlist.createTemporary(origPlaylist.name).done(function (_playlist) {
-                _playlist.load('tracks').done(function (playlist) {
+                _playlist.load('tracks', 'name').done(function (playlist) {
                     tempPlaylist = playlist;
                     //Get original tracks
                     origPlaylist.tracks.snapshot().done(function (origTracksSS) {
@@ -31,14 +31,18 @@
                                         //, {'fields': ['track', 'artist', 'album', 'duration']}
                                     );
                                     var playlistContainer = document.getElementById('playlist');
+                                    playlistContainer.innerHTML = '';
                                     playlistContainer.appendChild(list.node);
                                     list.init();
                                     list.selectItem(0);
 
-                                    var image = Image.forPlaylist(origPlaylist, { width: 300, height: 300 });
+                                    var image = Image.forPlaylist(origPlaylist, { width: 175, height: 175 });
                                     var albumContainer = document.getElementById('albumContainer');
                                     albumContainer.innerHTML = '';
                                     albumContainer.appendChild(image.node);
+
+                                    var name = playlist.name.decodeForText();
+                                    document.getElementById('playlistName').innerText = name;
 
                                     models.player.addEventListener('change', genericChange);
                                     models.player.addEventListener('change:track', trackChanged);
@@ -65,14 +69,15 @@
             if (player.context.uri == tempPlaylist.uri) {
                 //curTime = 10;
                 curTime = 60;
-                document.getElementById('curCounter').innerText = curTime;
+                //document.getElementById('curCounter').innerText = curTime;
 
-                document.getElementById('curCounter-title').innerText = 'Seconds until next song:';
+                //document.getElementById('curCounter-title').innerText = 'Seconds until next song:';
 
-                var image = Image.forTrack(player.track, { width: 300, height: 300 });
-                var coverContainer = document.getElementById('albumContainer');
-                coverContainer.innerHTML = '';
-                coverContainer.appendChild(image.node);
+                //Changes the album cover to the current track
+                //var image = Image.forTrack(player.track, { width: 300, height: 300 });
+                //var coverContainer = document.getElementById('albumContainer');
+                //coverContainer.innerHTML = '';
+                //coverContainer.appendChild(image.node);
             }
         });
     }
@@ -163,7 +168,9 @@
                         curTime--;
                         totalTime++;
                     }
-                    document.getElementById('curCounter').innerText = curTime;
+                    //document.getElementById('curCounter').innerText = curTime;
+                    var canvas = document.getElementById('pieTimer');
+                    drawTimer(canvas, curTime);
 
                     if (totalTime >= 60) {
                         document.getElementById('totalCounter').innerText = createHoursAndMinutesString(totalTime) + ' left';
@@ -209,5 +216,58 @@
             time += minutes + ' minutes';
 
         return time;
+    }
+
+    function drawTimer(canvas, curTime) {
+        var context = canvas.getContext('2d');
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        context.fillStyle = 'rgba(55,55,55,.9)';
+        context.beginPath();
+        context.arc(60, 60, 60, 0, 2 * Math.PI, true);
+        context.fill();
+        context.closePath();
+
+        var fillRatio = curTime / 60.0;
+        var startAngle = (-1 * Math.PI) / 2;
+        var endingAngle = (-2 * Math.PI) * fillRatio - Math.PI / 2;
+        context.strokeStyle = '#DDDDDD';
+        context.fillStyle = '#DDDDDD';
+        if (fillRatio > .25) {
+            context.strokeStyle = '#DDDDDD';
+            context.fillStyle = '#DDDDDD';
+        }
+        else if (fillRatio > .1) {
+            context.strokeStyle = '#EBD411';
+            context.fillStyle = '#EBD411';
+        }
+        else {
+            context.strokeStyle = '#A31919';
+            context.fillStyle = '#A31919';
+        }
+
+        context.lineWidth = 20;
+        context.beginPath();
+        context.arc(60, 60, 50, startAngle, endingAngle, true);
+        context.stroke();
+        context.closePath();
+
+        context.font = "normal 55px 'Lucida Grande', 'Helvetica', Georgia";
+        if (curTime >= 10)
+            context.fillText(curTime, 29, 79);
+        else
+            context.fillText(curTime, 45, 79);
+
+        context.lineWidth = .5;
+        context.strokeStyle = '#000000';
+        context.beginPath();
+        context.arc(60, 60, 60, 0, 2 * Math.PI, true);
+        context.stroke();
+        context.closePath();
+
+        context.beginPath();
+        context.arc(60, 60, 40, 0, 2 * Math.PI, true);
+        context.stroke();
+        context.closePath();
     }
 });
