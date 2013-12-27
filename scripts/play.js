@@ -17,7 +17,7 @@
         var playlistURI = args.join(':');
 
         //Get original playlist
-        models.Playlist.fromURI(playlistURI).load('tracks', 'name').done(function (origPlaylist) {
+        models.Playlist.fromURI(playlistURI).load('tracks', 'name', 'owner', 'description').done(function (origPlaylist) {
             //Create temp playlist
             models.Playlist.createTemporary(origPlaylist.name).done(function (_playlist) {
                 _playlist.load('tracks', 'name').done(function (playlist) {
@@ -41,8 +41,15 @@
                                     albumContainer.innerHTML = '';
                                     albumContainer.appendChild(image.node);
 
-                                    var name = playlist.name.decodeForText();
+                                    var name = handleLongString(playlist.name.decodeForText());
                                     document.getElementById('playlistName').innerText = name;
+
+                                    origPlaylist.owner.load('name').done(function (owner) {
+                                        document.getElementById('playlistOwner').innerText = 'by ' + owner.name.decodeForText();
+                                    });
+
+                                    var description = origPlaylist.description.decodeForText();
+                                    document.getElementById('playlistDescription').innerText = description;
 
                                     models.player.addEventListener('change', genericChange);
                                     models.player.addEventListener('change:track', trackChanged);
@@ -269,5 +276,13 @@
         context.arc(60, 60, 40, 0, 2 * Math.PI, true);
         context.stroke();
         context.closePath();
+    }
+
+    function handleLongString(str) {
+        if (str.length > 45) {
+            str = str.substring(0, 41)
+            str += '...';
+        }
+        return str;
     }
 });
