@@ -179,8 +179,8 @@
                     var canvas = document.getElementById('pieTimer');
                     drawTimer(canvas, curTime);
 
-                    if (totalTime >= 60) {
-                        document.getElementById('totalCounter').innerText = createHoursAndMinutesString(totalTime) + ' left';
+                    if (curTime + 1 >= 60) {
+                        document.getElementById('totalCounter').innerText = createHoursAndMinutesString(totalTime - 1) + ' to go';
                     }
                 }
             });
@@ -203,10 +203,10 @@
 
     function createHoursAndMinutesString(seconds) {
         seconds = 3600 - seconds;
+
         var sec_num = parseInt(seconds, 10); // don't forget the second parm
         var hours = Math.floor(sec_num / 3600);
         var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-        var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
         var time = '';
 
