@@ -42,45 +42,60 @@ function createPlaylistChooserItem(models, Library, Image, playlist, isAlternate
     var coverContainer = document.createElement('div');
     coverContainer.className = 'albumCover';
     coverContainer.appendChild(image.node);
-
-    var coverLink = document.createElement('a');
-    coverLink.href = '#';
-    coverLink.id = playlist.uri;
-    $(coverLink).click(function (obj) {
-        models.application.openURI('spotify:app:powerhour-app:play:' + this.id);
-    });
-    coverLink.appendChild(coverContainer);
-    playlistContainer.appendChild(coverLink);
+    playlistContainer.appendChild(coverContainer);
 
     var detailsContainer = document.createElement('div');
     detailsContainer.className = 'playlistDetails-container';
     playlistContainer.appendChild(detailsContainer);
-                
-    var name = document.createElement('span');
-    name.className = 'playlistName';
-    name.innerText = playlist.name.decodeForText();
-    detailsContainer.appendChild(name);
 
-    var br = document.createElement("br");
-    detailsContainer.appendChild(br);
+    //Add playlist name
+    var nameLink = document.createElement('a');
+    nameLink.href = 'javascript:void(0);';
+    nameLink.id = playlist.uri;
+    nameLink.innerText = handleLongString(playlist.name.decodeForText());
+    nameLink.className = 'playlistName';
+    nameLink.onclick = function () {
+        models.application.openURI(this.id);
+    };
+    detailsContainer.appendChild(nameLink);
+    detailsContainer.innerHTML += '<br/>';
 
-    var owner = document.createElement('span');
-    owner.className = 'playlistOwner';
-    playlist.owner.load('name').done(function (ownerObj) {
-        owner.innerText = 'by ' + ownerObj.name.decodeForText();
+    playlist.owner.load('name').done(function (owner) {
+        //Add owner
+        var ownerLink = document.createElement('a');
+        ownerLink.href = 'javascript:void(0);';
+        ownerLink.id = playlist.owner.uri;
+        ownerLink.className = 'playlistOwner';
+        ownerLink.innerText = owner.name.decodeForText();
+        ownerLink.onclick = function (obj) {
+            models.application.openURI(this.id);
+        };
+        detailsContainer.appendChild(ownerLink);
+        detailsContainer.innerHTML += '<br/><br/>';
+
+        //Add description
+        var descr = document.createElement('span');
+        descr.className = 'playlistDescription';
+        descr.innerText = playlist.description.decodeForText();
+        detailsContainer.appendChild(descr);
+
+        var goPlayButton = document.createElement('button');
+        goPlayButton.id = playlist.uri;
+        goPlayButton.className = 'goPlayButton';
+        goPlayButton.innerText = 'Let\'s get started!';
+        goPlayButton.onclick = function (obj) {
+            models.application.openURI('spotify:app:powerhour-app:play:' + this.id);
+        };
+        detailsContainer.appendChild(goPlayButton);
     });
-    detailsContainer.appendChild(owner);
-
-    var br = document.createElement("br");
-    detailsContainer.appendChild(br);
-
-    var descr = document.createElement('span');
-    descr.className = 'playlistDescription';
-    descr.innerText = playlist.description.decodeForText();
-    detailsContainer.appendChild(descr);
-
-    var br = document.createElement("br");
-    detailsContainer.appendChild(br);
 
     return playlistContainer;
-} 
+}
+
+function handleLongString(str) {
+    if (str.length > 55) {
+        str = str.substring(0, 51)
+        str += '...';
+    }
+    return str;
+}
