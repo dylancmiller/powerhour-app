@@ -42,3 +42,9 @@
     word-wrap:break-word;
     white-space:normal;
 }
+
+#home .playlistOwner, 
+#home .playlistDescription{
+    font-size:12px;
+    color:#BFBFBF;
+}

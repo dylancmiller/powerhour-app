@@ -9,14 +9,19 @@
     var doPlaylistChooser = function () {
         document.getElementById('playlistChooser').innerHTML = '';
         var curLibrary = Library.forCurrentUser();
-        document.getElementById('playlistChooser').appendChild(createPlaylistChooserItem(models, Library, Image, curLibrary.starred, true));
 
-        curLibrary.playlists.snapshot().done(function (snapshot) {
-            for (var i = 0, l = snapshot.length; i < l; i++) {
-                var curPlaylist = snapshot.get(i);
-                var isAlternate = i % 2 == 1;
-                document.getElementById('playlistChooser').appendChild(createPlaylistChooserItem(models, Library, Image, curPlaylist, isAlternate));
-            }
+        curLibrary.starred.load('name', 'owner', 'description').done(function (starred) {
+            document.getElementById('playlistChooser').appendChild(createPlaylistChooserItem(models, Library, Image, starred, true));
+
+            curLibrary.playlists.snapshot().done(function (snapshot) {
+                for (var i = 0, l = snapshot.length; i < l; i++) {
+                    var curPlaylist = snapshot.get(i);
+                    curPlaylist.load('name', 'owner', 'description').done(function (playlist) {
+                        var isAlternate = i % 2 == 1;
+                        document.getElementById('playlistChooser').appendChild(createPlaylistChooserItem(models, Library, Image, playlist, isAlternate));
+                    });
+                }
+            });
         });
     }
 
@@ -53,24 +58,29 @@ function createPlaylistChooserItem(models, Library, Image, playlist, isAlternate
                 
     var name = document.createElement('span');
     name.className = 'playlistName';
-    if (playlist.name == null) {
-        //Assume this is the starred playlist
-        name.innerText = 'Starred';
-    }
-    else {
-        name.innerText = playlist.name.decodeForText();
-    }
+    name.innerText = playlist.name.decodeForText();
     detailsContainer.appendChild(name);
+
+    var br = document.createElement("br");
+    detailsContainer.appendChild(br);
+
+    var owner = document.createElement('span');
+    owner.className = 'playlistOwner';
+    playlist.owner.load('name').done(function (ownerObj) {
+        owner.innerText = 'by ' + ownerObj.name.decodeForText();
+    });
+    detailsContainer.appendChild(owner);
+
+    var br = document.createElement("br");
+    detailsContainer.appendChild(br);
 
     var descr = document.createElement('span');
     descr.className = 'playlistDescription';
-    if (playlist.description == null) {
-        descr.innerText = '';
-    }
-    else {
-        descr.innerText = playlist.description.decodeForText();
-    }
+    descr.innerText = playlist.description.decodeForText();
     detailsContainer.appendChild(descr);
+
+    var br = document.createElement("br");
+    detailsContainer.appendChild(br);
 
     return playlistContainer;
 } 

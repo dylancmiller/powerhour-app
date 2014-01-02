@@ -29,3 +29,14 @@ body {
 .clear {
     clear:both;
 }
+
+.vertical-align-helper {
+    display:inline-block;
+    height:100%;
+    vertical-align:middle;
+}
+
+#logo {
+    display:inline-block;
+    vertical-align:middle;
+}
